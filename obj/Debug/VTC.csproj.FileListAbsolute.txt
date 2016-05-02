@@ -1,0 +1,10 @@
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\bin\Debug\VTC.exe.config
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\bin\Debug\VTC.exe
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\bin\Debug\VTC.pdb
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.csprojResolveAssemblyReference.cache
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.MainForm.resources
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.Properties.Resources.resources
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.csproj.GenerateResource.Cache
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.exe
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.pdb
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.startForm.resources
