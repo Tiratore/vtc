@@ -58,6 +58,17 @@ namespace VTC
             }
         }
 
+        static void cutter (subTitles[] arrTitles, string movDir)
+        {
+            for (int i = 0; i < arrTitles.Length; i++)
+            {
+                string dir = @"c:\VideoToComics\" + i;
+                System.IO.Directory.CreateDirectory(dir);
+                System.Diagnostics.Process.Start(@"E:\Файлы\ffmpeg\ffmpeg.exe", "-ss " + arrTitles[i].startTime + " -i " + movDir + " - f image2 -s 1024x768 1.jpg");
+                System.Diagnostics.Process.Start(@"E:\Файлы\ffmpeg\ffmpeg.exe", "-ss " + arrTitles[i].stopTime + " -i " + movDir + " - f image2 -s 1024x768 2.jpg");
+            }
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -84,10 +95,7 @@ namespace VTC
         {
             subTitles[] arrTitles;
             parser(srtDir, out arrTitles);
-            //for (int i = 0; i < fragmCols; i++)
-            //{
-            //    System.Diagnostics.Process.Start(@"ffmpeg\ffmpeg.exe", "ffmpeg -i -an -ss" + times[i] + "-an -r 1 -vframes 1 -y -f image2 -s 190x142" + i + "-snapshot.jpg");
-            //}
+            cutter(arrTitles, movDir);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
