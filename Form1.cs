@@ -58,14 +58,22 @@ namespace VTC
             }
         }
 
-        static void cutter (subTitles[] arrTitles, string movDir)
+        static void cutter(subTitles[] arrTitles, string movDir)
         {
+            System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.FileName = @"E:\Файлы\ffmpeg\ffmpeg.exe";
+            
             for (int i = 0; i < arrTitles.Length; i++)
             {
-                string dir = @"c:\VideoToComics\" + i;
-                System.IO.Directory.CreateDirectory(dir);
-                System.Diagnostics.Process.Start(@"E:\Файлы\ffmpeg\ffmpeg.exe", "-ss " + arrTitles[i].startTime + " -i " + movDir + " - f image2 -s 1024x768 1.jpg");
-                System.Diagnostics.Process.Start(@"E:\Файлы\ffmpeg\ffmpeg.exe", "-ss " + arrTitles[i].stopTime + " -i " + movDir + " - f image2 -s 1024x768 2.jpg");
+                System.IO.Directory.CreateDirectory(@"c:\VideoToComics\" + i);
+                //string p1 = @"-ss " + arrTitles[i].startTime + " -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
+                proc.StartInfo.Arguments = @"-ss " + arrTitles[i].startTime + " -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
+                proc.Start();
+                string output = proc.StandardOutput.ReadToEnd();
+                MessageBox.Show(output);
+
             }
         }
 
