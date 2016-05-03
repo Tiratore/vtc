@@ -43,8 +43,8 @@ namespace VTC
             {
                 openText.ReadLine();
                 string[] time = openText.ReadLine().Split(new string[1] { " --> " }, StringSplitOptions.RemoveEmptyEntries);
-                arrTitles[i].startTime = time[0];
-                arrTitles[i].stopTime = time[1];
+                arrTitles[i].startTime = time[0]; // 00:12:52.153
+                arrTitles[i].stopTime = time[1]; //54.152
                 arrTitles[i].text = openText.ReadLine();
                 do
                 {
@@ -64,17 +64,24 @@ namespace VTC
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.FileName = @"E:\Файлы\ffmpeg\ffmpeg.exe";
-            
-            for (int i = 0; i < arrTitles.Length; i++)
-            {
-                System.IO.Directory.CreateDirectory(@"c:\VideoToComics\" + i);
-                //string p1 = @"-ss " + arrTitles[i].startTime + " -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
-                proc.StartInfo.Arguments = @"-ss " + arrTitles[i].startTime + " -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
-                proc.Start();
-                string output = proc.StandardOutput.ReadToEnd();
-                MessageBox.Show(output);
 
-            }
+            proc.StartInfo.Arguments = @" -ss 00:00:12.044 -i C:\Users\Сергей\Desktop\1.avi -f image2 -vframes 1 c:\VideoToComics\2.jpg";
+            proc.Start();
+
+            //for (int i = 0; i < arrTitles.Length; i++)
+            //{
+            //    System.IO.Directory.CreateDirectory(@"c:\VideoToComics\" + i);
+            //    //string p1 = @"-ss " + arrTitles[i].startTime + " -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
+            //    proc.StartInfo.Arguments = @" -ss 00:00:00,847 -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
+            //    proc.Start();
+            //    string output = "";
+            //    while (!proc.StandardOutput.EndOfStream)
+            //    {
+            //        output += " " + proc.StandardOutput.ReadLine();
+            //    }
+            //    MessageBox.Show(output);
+
+            //}
         }
 
         public MainForm()
