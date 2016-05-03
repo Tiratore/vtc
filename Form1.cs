@@ -14,14 +14,7 @@ namespace VTC
     {
         string srtDir, movDir;
 
-        public struct subTitles
-        {
-            public TimeSpan startTime; //Начало показа
-            public TimeSpan stopTime; //Конец показа
-            public string text; //Текст титра
-        }
-
-        static void parser(string Dir, out subTitles[] arrTitles)
+        static void parser(string Dir, out SubTitles[] arrTitles)
         {
             System.IO.FileStream fs = new System.IO.FileStream(Dir, System.IO.FileMode.Open);
             System.IO.StreamReader openText = new System.IO.StreamReader(fs);
@@ -37,7 +30,7 @@ namespace VTC
                     continue;
                 }
             }
-            arrTitles = new subTitles[count];
+            arrTitles = new SubTitles[count];
             fs.Seek(0, System.IO.SeekOrigin.Begin);
             for (int i = 0; i < count; i++)
             {
@@ -62,7 +55,7 @@ namespace VTC
             }
         }
 
-        static void cutter(subTitles[] arrTitles, string movDir)
+        static void cutter(SubTitles[] arrTitles, string movDir)
         {
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo.UseShellExecute = false;
@@ -112,7 +105,7 @@ namespace VTC
         {
             Form waitForm = new Form();
             waitForm.Show();
-            subTitles[] arrTitles;
+            SubTitles[] arrTitles;
             parser(srtDir, out arrTitles);
             cutter(arrTitles, movDir);
             waitForm.Close();
