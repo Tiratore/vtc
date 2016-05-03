@@ -16,8 +16,8 @@ namespace VTC
 
         public struct subTitles
         {
-            public string startTime; //Начало показа
-            public string stopTime; //Конец показа
+            public TimeSpan startTime; //Начало показа
+            public TimeSpan stopTime; //Конец показа
             public string text; //Текст титра
         }
 
@@ -43,8 +43,12 @@ namespace VTC
             {
                 openText.ReadLine();
                 string[] time = openText.ReadLine().Split(new string[1] { " --> " }, StringSplitOptions.RemoveEmptyEntries);
-                arrTitles[i].startTime = time[0]; // 00:12:52.153
-                arrTitles[i].stopTime = time[1]; //54.152
+                string[] startParams = time[0].Split(new char[2] {':', ','}, StringSplitOptions.RemoveEmptyEntries);
+                string[] stopParams = time[1].Split(new char[2] { ':', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                TimeSpan startTime = new TimeSpan(0, int.Parse(startParams[0]), int.Parse(startParams[1]), int.Parse(startParams[2]), int.Parse(startParams[3]));
+                TimeSpan stopTime = new TimeSpan(0, int.Parse(stopParams[0]), int.Parse(stopParams[1]), int.Parse(stopParams[2]), int.Parse(stopParams[3]));
+                arrTitles[i].startTime = startTime;
+                arrTitles[i].stopTime = stopTime;
                 arrTitles[i].text = openText.ReadLine();
                 do
                 {
@@ -63,25 +67,23 @@ namespace VTC
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.FileName = @"E:\Файлы\ffmpeg\ffmpeg.exe";
 
-            proc.StartInfo.Arguments = @" -ss 00:00:12.044 -i C:\Users\Сергей\Desktop\1.avi -f image2 -vframes 1 c:\VideoToComics\2.jpg";
-            proc.Start();
+            for (int i = 0; i < arrTitles.Length; i++)
+            {
+                System.IO.Directory.CreateDirectory(@"c:\VideoToComics\" + i);
+                TimeSpan duration = arrTitles[i].stopTime - arrTitles[i].startTime;
+                TimeSpan tmp = TimeSpan.FromTicks(arrTitles[i].startTime.Ticks);
+                for (int t = 0; t < duration.TotalSeconds * 2; t++)
+                {
+                    string time = tmp.ToString(@"hh\:mm\:ss\.fff");
 
-            //for (int i = 0; i < arrTitles.Length; i++)
-            //{
-            //    System.IO.Directory.CreateDirectory(@"c:\VideoToComics\" + i);
-            //    //string p1 = @"-ss " + arrTitles[i].startTime + " -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
-            //    proc.StartInfo.Arguments = @" -ss 00:00:00,847 -i C:\\Users\\Сергей\\Desktop\\1.avi -f image2 -vframes 1 c:\\VideoToComics\\" + i + "\\2.jpg";
-            //    proc.Start();
-            //    string output = "";
-            //    while (!proc.StandardOutput.EndOfStream)
-            //    {
-            //        output += " " + proc.StandardOutput.ReadLine();
-            //    }
-            //    MessageBox.Show(output);
-
-            //}
+                    proc.StartInfo.Arguments = @" -ss " + time + " -i " + movDir + @" -f image2 -vframes 1 c:\VideoToComics\" + i + @"\" + t + @".jpg";
+                    proc.Start();
+                    tmp = tmp.Add(TimeSpan.FromMilliseconds(500));                    
+                }                
+            }
         }
 
         public MainForm()
@@ -108,9 +110,12 @@ namespace VTC
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            Form waitForm = new Form();
+            waitForm.Show();
             subTitles[] arrTitles;
             parser(srtDir, out arrTitles);
             cutter(arrTitles, movDir);
+            waitForm.Close();
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
