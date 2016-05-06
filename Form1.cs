@@ -18,8 +18,8 @@ namespace VTC
 
         string srtDir, movDir;
 
-        Frame[] frames = new Frame[50];
-        int currentFrame = 0;
+        List<Frame> frames = new List<Frame>();
+        Frame currentFrame = null;
 
         static void parser(string Dir, out SubTitles[] arrTitles)
         {
@@ -116,72 +116,91 @@ namespace VTC
             //parser(srtDir, out arrTitles);
             //cutter(arrTitles, movDir);
             //waitForm.Close();
-
         }
         
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            frames[currentFrame].id = currentFrame;
-            frames[currentFrame].priority = 0;
-            frames[currentFrame].xStart = e.X;
-            frames[currentFrame].yStart = e.Y;
-
             if (e.Button == MouseButtons.Left)
             {
+                Frame f = new Frame(0, e.X, e.Y);
+                frames.Add(f);
+
                 isDrag = true;
+                Control control = (Control)sender;
+
+                //Сохраняем стартовый поинт
+                startPoint = control.PointToScreen(new Point(e.X, e.Y));
+            } else if (e.Button == MouseButtons.Right)
+            {
+                int maxId = 0, maxPriority = 0;
+                
+                bool isMax = false; currentFrame = null;
+
+                for (int i = 0; i < frames.Count; i++)
+                {
+                    maxId = 0; maxPriority = 0; isMax = false;
+                    if (frames[i].isPointInRectangle(e.X, e.Y))
+                    {
+                        if (maxId <= i)
+                        {
+                            maxId = i;
+                            isMax = true;
+                        }
+                        if (maxPriority <= frames[i].priority)
+                        {
+                            maxPriority = frames[i].priority;
+                        }
+                        else
+                        {
+                            isMax = false;
+                        }
+
+                        if (isMax)
+                        {
+                            currentFrame = frames[i];
+                        }
+                    }
+                }
+                MessageBox.Show(currentFrame.xStart.ToString() + " " + currentFrame.yStart.ToString());
             }
-
-            Control control = (Control)sender;
-
-            // Calculate the startPoint by using the PointToScreen 
-            // method.
-            startPoint = control.PointToScreen(new Point(e.X, e.Y));
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isDrag)
-
-            // Hide the previous rectangle by calling the 
-            // DrawReversibleFrame method with the same parameters.
+            if (e.Button == MouseButtons.Left)
             {
-                ControlPaint.DrawReversibleFrame(theRectangle,
-              this.BackColor, FrameStyle.Dashed);
+                if (!isDrag) return;
+                // Скрытие пердидущего ректангла вызовом DrawReversibleFrame с определенными параметрами
+                ControlPaint.DrawReversibleFrame(theRectangle, this.BackColor, FrameStyle.Dashed);
 
-                // Calculate the endpoint and dimensions for the new 
-                // rectangle, again using the PointToScreen method.
+                // Сохраняем конечный поинт и и размерыы нового прямоугольника
                 Point endPoint = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
 
                 int width = endPoint.X - startPoint.X;
                 int height = endPoint.Y - startPoint.Y;
-                theRectangle = new Rectangle(startPoint.X,
-              startPoint.Y, width, height);
+                theRectangle = new Rectangle(startPoint.X, startPoint.Y, width, height);
 
-                // Draw the new rectangle by calling DrawReversibleFrame
-                // again.  
+                // Рисуем прямоугольник
                 ControlPaint.DrawReversibleFrame(theRectangle,
-              this.BackColor, FrameStyle.Dashed);
+                this.BackColor, FrameStyle.Dashed);
+            } else if (e.Button == MouseButtons.Right)
+            {
+
             }
+
+
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            //pBox.Width = 0;
-            //pBox.Height = 0;
-            //pBox.Visible = false;
-
-            // If the MouseUp event occurs, the user is not dragging.
+            // Если маусап - выделение окончено.
             isDrag = false;
 
-            // Draw the rectangle to be evaluated. Set a dashed frame style 
-            // using the FrameStyle enumeration.
-            ControlPaint.DrawReversibleFrame(theRectangle,
-          this.BackColor, FrameStyle.Dashed);
+            // Draw the rectangle to be evaluated. Set a dashed frame style using the FrameStyle enumeration.
+            ControlPaint.DrawReversibleFrame(theRectangle, this.BackColor, FrameStyle.Dashed);
 
-            // Find out which controls intersect the rectangle and 
-            // change their color. The method uses the RectangleToScreen  
-            // method to convert the Control's client coordinates 
-            // to screen coordinates.
+            // Find out which controls intersect the rectangle and change their color.
+            // The method uses the RectangleToScreen method to convert the Control's client coordinates to screen coordinates.
             Rectangle controlRectangle;
             for (int i = 0; i < Controls.Count; i++)
             {
@@ -195,12 +214,11 @@ namespace VTC
             // Reset the rectangle.
             theRectangle = new Rectangle(0, 0, 0, 0);
 
-            frames[currentFrame].xStop = e.X;
-            frames[currentFrame].yStop = e.Y;
+            frames[frames.Count - 1].xStop = e.X;
+            frames[frames.Count - 1].yStop = e.Y;
             Graphics g = pictureBox1.CreateGraphics();
 
-            g.DrawRectangle(Pens.Red, frames[currentFrame].xStart - 1, frames[currentFrame].yStart - 1, frames[currentFrame].xStop - frames[currentFrame].xStart + 1, frames[currentFrame].yStop - frames[currentFrame].yStart + 1);
-            currentFrame++;
+            g.DrawRectangle(Pens.Red, frames[frames.Count - 1].xStart - 1, frames[frames.Count - 1].yStart - 1, frames[frames.Count - 1].xStop - frames[frames.Count - 1].xStart + 1, frames[frames.Count - 1].yStop - frames[frames.Count - 1].yStart + 1);
         }
     }
 }
