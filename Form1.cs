@@ -12,7 +12,14 @@ namespace VTC
 {
     public partial class MainForm : Form
     {
+        bool isDrag = false;
+        Rectangle theRectangle = new Rectangle(new Point(0, 0), new Size(0, 0));
+        Point startPoint;
+
         string srtDir, movDir;
+
+        Frame[] frames = new Frame[50];
+        int currentFrame = 0;
 
         static void parser(string Dir, out SubTitles[] arrTitles)
         {
@@ -103,17 +110,97 @@ namespace VTC
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            Form waitForm = new Form();
-            waitForm.Show();
-            SubTitles[] arrTitles;
-            parser(srtDir, out arrTitles);
-            cutter(arrTitles, movDir);
-            waitForm.Close();
-        }
+            //Form waitForm = new Form();
+            //waitForm.Show();
+            //SubTitles[] arrTitles;
+            //parser(srtDir, out arrTitles);
+            //cutter(arrTitles, movDir);
+            //waitForm.Close();
 
+        }
+        
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
+            frames[currentFrame].id = currentFrame;
+            frames[currentFrame].priority = 0;
+            frames[currentFrame].xStart = e.X;
+            frames[currentFrame].yStart = e.Y;
 
+            if (e.Button == MouseButtons.Left)
+            {
+                isDrag = true;
+            }
+
+            Control control = (Control)sender;
+
+            // Calculate the startPoint by using the PointToScreen 
+            // method.
+            startPoint = control.PointToScreen(new Point(e.X, e.Y));
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDrag)
+
+            // Hide the previous rectangle by calling the 
+            // DrawReversibleFrame method with the same parameters.
+            {
+                ControlPaint.DrawReversibleFrame(theRectangle,
+              this.BackColor, FrameStyle.Dashed);
+
+                // Calculate the endpoint and dimensions for the new 
+                // rectangle, again using the PointToScreen method.
+                Point endPoint = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+
+                int width = endPoint.X - startPoint.X;
+                int height = endPoint.Y - startPoint.Y;
+                theRectangle = new Rectangle(startPoint.X,
+              startPoint.Y, width, height);
+
+                // Draw the new rectangle by calling DrawReversibleFrame
+                // again.  
+                ControlPaint.DrawReversibleFrame(theRectangle,
+              this.BackColor, FrameStyle.Dashed);
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            //pBox.Width = 0;
+            //pBox.Height = 0;
+            //pBox.Visible = false;
+
+            // If the MouseUp event occurs, the user is not dragging.
+            isDrag = false;
+
+            // Draw the rectangle to be evaluated. Set a dashed frame style 
+            // using the FrameStyle enumeration.
+            ControlPaint.DrawReversibleFrame(theRectangle,
+          this.BackColor, FrameStyle.Dashed);
+
+            // Find out which controls intersect the rectangle and 
+            // change their color. The method uses the RectangleToScreen  
+            // method to convert the Control's client coordinates 
+            // to screen coordinates.
+            Rectangle controlRectangle;
+            for (int i = 0; i < Controls.Count; i++)
+            {
+                controlRectangle = Controls[i].RectangleToScreen(Controls[i].ClientRectangle);
+                if (controlRectangle.IntersectsWith(theRectangle))
+                {
+                    Controls[i].BackColor = Color.BurlyWood;
+                }
+            }
+
+            // Reset the rectangle.
+            theRectangle = new Rectangle(0, 0, 0, 0);
+
+            frames[currentFrame].xStop = e.X;
+            frames[currentFrame].yStop = e.Y;
+            Graphics g = pictureBox1.CreateGraphics();
+
+            g.DrawRectangle(Pens.Red, frames[currentFrame].xStart - 1, frames[currentFrame].yStart - 1, frames[currentFrame].xStop - frames[currentFrame].xStart + 1, frames[currentFrame].yStop - frames[currentFrame].yStart + 1);
+            currentFrame++;
         }
     }
 }
