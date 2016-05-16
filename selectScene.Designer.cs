@@ -49,6 +49,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(700, 400);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             // 
             // subtitlesText
             // 
@@ -69,6 +70,7 @@
             this.DoubleBuffered = true;
             this.Name = "selectScene";
             this.Text = "selectScene";
+            this.Load += new System.EventHandler(this.selectScene_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
