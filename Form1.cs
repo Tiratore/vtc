@@ -161,7 +161,7 @@ namespace VTC
                         }
                     }
                 }
-                MessageBox.Show(currentFrame.xStart.ToString() + " " + currentFrame.yStart.ToString());
+                //MessageBox.Show(currentFrame.xStart.ToString() + " " + currentFrame.yStart.ToString());
             }
         }
 
@@ -183,42 +183,83 @@ namespace VTC
                 // Рисуем прямоугольник
                 ControlPaint.DrawReversibleFrame(theRectangle,
                 this.BackColor, FrameStyle.Dashed);
-            } else if (e.Button == MouseButtons.Right)
-            {
+            } //else if (e.Button == MouseButtons.Right)
+            //{
 
-            }
+            //}
 
 
         }
 
+        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int maxId = 0, maxPriority = 0;
+
+                bool isMax = false; currentFrame = null;
+
+                for (int i = 0; i < frames.Count; i++)
+                {
+                    maxId = 0; maxPriority = 0; isMax = false;
+                    if (frames[i].isPointInRectangle(e.X, e.Y))
+                    {
+                        if (maxId <= i)
+                        {
+                            maxId = i;
+                            isMax = true;
+                        }
+                        if (maxPriority <= frames[i].priority)
+                        {
+                            maxPriority = frames[i].priority;
+                        }
+                        else
+                        {
+                            isMax = false;
+                        }
+
+                        if (isMax)
+                        {
+                            currentFrame = frames[i];
+                        }
+                    }
+                }
+                MessageBox.Show(currentFrame.xStart.ToString() + " " + currentFrame.yStart.ToString());
+            }
+        }
+
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            // Если маусап - выделение окончено.
-            isDrag = false;
-
-            // Draw the rectangle to be evaluated. Set a dashed frame style using the FrameStyle enumeration.
-            ControlPaint.DrawReversibleFrame(theRectangle, this.BackColor, FrameStyle.Dashed);
-
-            // Find out which controls intersect the rectangle and change their color.
-            // The method uses the RectangleToScreen method to convert the Control's client coordinates to screen coordinates.
-            Rectangle controlRectangle;
-            for (int i = 0; i < Controls.Count; i++)
+            if (e.Button == MouseButtons.Left)
             {
-                controlRectangle = Controls[i].RectangleToScreen(Controls[i].ClientRectangle);
-                if (controlRectangle.IntersectsWith(theRectangle))
+                // Если маусап - выделение окончено.
+                isDrag = false;
+
+                // Draw the rectangle to be evaluated. Set a dashed frame style using the FrameStyle enumeration.
+                ControlPaint.DrawReversibleFrame(theRectangle, this.BackColor, FrameStyle.Dashed);
+
+                // Find out which controls intersect the rectangle and change their color.
+                // The method uses the RectangleToScreen method to convert the Control's client coordinates to screen coordinates.
+                Rectangle controlRectangle;
+                for (int i = 0; i < Controls.Count; i++)
                 {
-                    Controls[i].BackColor = Color.BurlyWood;
+                    controlRectangle = Controls[i].RectangleToScreen(Controls[i].ClientRectangle);
+                    if (controlRectangle.IntersectsWith(theRectangle))
+                    {
+                        Controls[i].BackColor = Color.BurlyWood;
+                    }
                 }
+
+                // Reset the rectangle.
+                theRectangle = new Rectangle(0, 0, 0, 0);
+
+                frames[frames.Count - 1].xStop = e.X;
+                frames[frames.Count - 1].yStop = e.Y;
+                Graphics g = pictureBox1.CreateGraphics();
+
+                g.DrawRectangle(Pens.Red, frames[frames.Count - 1].xStart - 1, frames[frames.Count - 1].yStart - 1, frames[frames.Count - 1].xStop - frames[frames.Count - 1].xStart + 1, frames[frames.Count - 1].yStop - frames[frames.Count - 1].yStart + 1);
+
             }
-
-            // Reset the rectangle.
-            theRectangle = new Rectangle(0, 0, 0, 0);
-
-            frames[frames.Count - 1].xStop = e.X;
-            frames[frames.Count - 1].yStop = e.Y;
-            Graphics g = pictureBox1.CreateGraphics();
-
-            g.DrawRectangle(Pens.Red, frames[frames.Count - 1].xStart - 1, frames[frames.Count - 1].yStart - 1, frames[frames.Count - 1].xStop - frames[frames.Count - 1].xStart + 1, frames[frames.Count - 1].yStop - frames[frames.Count - 1].yStart + 1);
         }
     }
 }

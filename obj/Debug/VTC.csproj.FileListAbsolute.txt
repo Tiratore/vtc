@@ -8,3 +8,4 @@ E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.c
 E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.exe
 E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.pdb
 E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.startForm.resources
+E:\Документы\Учёба ДонНУ\Курсач\VTC\VTC\obj\Debug\VTC.selectScene.resources
